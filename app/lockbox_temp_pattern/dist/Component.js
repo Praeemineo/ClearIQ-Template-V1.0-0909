@@ -1,0 +1,2 @@
+sap.ui.define(["sap/fe/core/AppComponent","file/temp/lockboxtemppattern/ext/controller/ObjectPageExt","file/temp/lockboxtemppattern/ext/util/Formatter"],function(t,e,o){"use strict";window.ObjectPageExt=e;window.Formatter=o;return t.extend("file.temp.lockboxtemppattern.Component",{metadata:{manifest:"json"}})});
+//# sourceMappingURL=Component.js.map

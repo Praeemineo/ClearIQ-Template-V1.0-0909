@@ -1,0 +1,228 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:l="sap.ui.layout"
+    xmlns:f="sap.f">
+
+    <Dialog
+        id="createTemplateDialog"
+        title="Create Template"
+        contentWidth="900px"
+        contentHeight="650px"
+        resizable="true"
+        draggable="true">
+
+        <content>
+            <IconTabBar id="createTemplateTabBar" expandable="false">
+                <items>
+
+                    <!-- ==================================================
+                         TAB 1: TEMPLATE SETTINGS
+                    =================================================== -->
+                    <IconTabFilter text="Template Settings" key="settings">
+                        <l:VerticalLayout class="sapUiContentPadding" width="100%">
+                            <Label text="Template Type" labelFor="templateTypeSelect" required="true"/>
+                            <Select id="templateTypeSelect" width="100%" forceSelection="true">
+                                <core:Item key="LOCKBOX" text="Lockbox"/>
+                                <core:Item key="PAYMENT" text="Payment"/>
+                                <core:Item key="CLEARING" text="Clearing"/>
+                            </Select>
+
+                            <Label text="Sheet Mode" labelFor="sheetModeSelect" class="sapUiTinyMarginTop" required="true"/>
+                            <SegmentedButton
+                                id="sheetModeSelect"
+                                selectionChange="onSheetModeChange"
+                                selectedKey="SINGLE">
+                                <items>
+                                    <SegmentedButtonItem key="SINGLE" text="Single Sheet"/>
+                                    <SegmentedButtonItem key="MULTIPLE" text="Multiple Sheets"/>
+                                </items>
+                            </SegmentedButton>
+                            <Text text="When Multiple Sheets is selected, each field below can be assigned to Summary, Detail, or Adjustments."
+                                  class="sapUiTinyMarginTop" />
+                        </l:VerticalLayout>
+                    </IconTabFilter>
+
+                    <!-- ==================================================
+                         TAB 2: STANDARD FIELDS
+                    =================================================== -->
+                    <IconTabFilter text="Standard Fields" key="standard">
+                        <l:VerticalLayout width="100%" class="sapUiSmallMarginBegin sapUiSmallMarginEnd">
+                            <Toolbar>
+                                <Label text="Filter by Data Type:" class="sapUiTinyMarginEnd"/>
+                                <Select id="typeFilterSelect" change="onTypeFilterChange" selectedKey="ALL">
+                                    <core:Item key="ALL" text="All Types"/>
+                                    <core:Item key="Text" text="Text"/>
+                                    <core:Item key="Date" text="Date"/>
+                                    <core:Item key="Number" text="Number"/>
+                                    <core:Item key="Decimal" text="Decimal"/>
+                                    <core:Item key="Boolean" text="Boolean"/>
+                                </Select>
+                            </Toolbar>
+
+                            <Table
+                                id="fieldsTable"
+                                mode="MultiSelect"
+                                selectionChange="onFieldSelectionChange"
+                                items="{path: '/FieldMaster', filters: [{path: 'isStandard', operator: 'EQ', value1: true}]}"
+                                growing="true"
+                                growingThreshold="50">
+                                <columns>
+                                    <Column><Text text="Field Name"/></Column>
+                                    <Column><Text text="Data Type"/></Column>
+                                    <Column hAlign="Center"><Text text="Required"/></Column>
+                                </columns>
+                                <items>
+                                    <ColumnListItem>
+                                        <cells>
+                                            <Text text="{fieldName}"/>
+                                            <ObjectStatus
+                                                text="{path:'dataType', formatter:'.formatTypeText'}"
+                                                state="{path:'dataType', formatter:'.formatTypeState'}"/>
+                                            <ObjectStatus
+                                                text="{path:'isRequired', formatter:'.formatPropertyText'}"
+                                                state="{path:'isRequired', formatter:'.formatPropertyState'}"/>
+                                        </cells>
+                                    </ColumnListItem>
+                                </items>
+                            </Table>
+                        </l:VerticalLayout>
+                    </IconTabFilter>
+
+                    <!-- ==================================================
+                         TAB 3: CUSTOM FIELDS
+                    =================================================== -->
+                    <IconTabFilter text="Custom Fields" key="custom">
+                        <l:VerticalLayout width="100%" class="sapUiSmallMarginBegin sapUiSmallMarginEnd">
+                            <Toolbar>
+                                <Title text="Custom Fields" level="H4"/>
+                                <ToolbarSpacer/>
+                                <Button text="Bulk Upload" icon="sap-icon://upload" press="onOpenUdfUploadPanel"/>
+                                <Button text="Add Field" icon="sap-icon://add" type="Emphasized" press="onAddNewField"/>
+                            </Toolbar>
+
+                            <Panel visible="{create>/showUdfUploadPanel}" class="sapUiTinyMarginTop">
+                                <l:HorizontalLayout>
+                                    <Button text="Download Template" press="onDownloadUdfTemplate" class="sapUiTinyMarginEnd"/>
+                                    <uploader:FileUploader
+                                        xmlns:uploader="sap.ui.unified"
+                                        id="udfFileUploader"
+                                        change="onUdfFileSelected"
+                                        fileType="xlsx"
+                                        placeholder="Choose an .xlsx file to import"/>
+                                </l:HorizontalLayout>
+
+                                <Table items="{create>/UdfUploadPreview}" class="sapUiTinyMarginTop">
+                                    <columns>
+                                        <Column><Text text="Field Name"/></Column>
+                                        <Column><Text text="Type"/></Column>
+                                        <Column><Text text="Required"/></Column>
+                                        <Column hAlign="Center"><Text text="Include"/></Column>
+                                    </columns>
+                                    <items>
+                                        <ColumnListItem>
+                                            <cells>
+                                                <Text text="{create>fieldName}"/>
+                                                <Text text="{create>dataType}"/>
+                                                <CheckBox selected="{create>isRequired}" editable="false"/>
+                                                <CheckBox selected="{create>include}"/>
+                                            </cells>
+                                        </ColumnListItem>
+                                    </items>
+                                </Table>
+
+                                <Button text="Import Selected" type="Emphasized" press="onImportUdfFields" class="sapUiTinyMarginTop"/>
+                            </Panel>
+
+                            <Table
+                                id="udfTable"
+                                mode="MultiSelect"
+                                selectionChange="onFieldSelectionChange"
+                                items="{path: '/FieldMaster', filters: [{path: 'isCustom', operator: 'EQ', value1: true}]}"
+                                growing="true"
+                                growingThreshold="50"
+                                class="sapUiTinyMarginTop">
+                                <columns>
+                                    <Column><Text text="Field Name"/></Column>
+                                    <Column><Text text="Data Type"/></Column>
+                                    <Column hAlign="Center"><Text text="Required"/></Column>
+                                    <Column hAlign="Center"><Text text=""/></Column>
+                                </columns>
+                                <items>
+                                    <ColumnListItem>
+                                        <cells>
+                                            <Text text="{fieldName}"/>
+                                            <ObjectStatus
+                                                text="{path:'dataType', formatter:'.formatTypeText'}"
+                                                state="{path:'dataType', formatter:'.formatTypeState'}"/>
+                                            <ObjectStatus
+                                                text="{path:'isRequired', formatter:'.formatPropertyText'}"
+                                                state="{path:'isRequired', formatter:'.formatPropertyState'}"/>
+                                            <Button icon="sap-icon://delete" type="Transparent" press="onDeleteUdfField"/>
+                                        </cells>
+                                    </ColumnListItem>
+                                </items>
+                            </Table>
+                        </l:VerticalLayout>
+                    </IconTabFilter>
+
+                    <!-- ==================================================
+                         TAB 4: SELECTED FIELDS (review + sheet assignment)
+                    =================================================== -->
+                    <IconTabFilter text="Selected Fields ({create>/SelectedFields/length})" key="selected">
+                        <l:VerticalLayout width="100%" class="sapUiSmallMarginBegin sapUiSmallMarginEnd">
+                            <Table
+                                id="selectedFieldsTable"
+                                items="{create>/SelectedFields}"
+                                noDataText="No fields selected yet. Go to Standard Fields or Custom Fields to pick some.">
+                                <columns>
+                                    <Column width="3em"><Text text="Seq"/></Column>
+                                    <Column><Text text="Field Name"/></Column>
+                                    <Column><Text text="Data Type"/></Column>
+                                    <Column visible="{create>/isMultiSheetMode}"><Text text="Sheet"/></Column>
+                                    <Column width="8em" hAlign="Center"><Text text="Actions"/></Column>
+                                </columns>
+                                <items>
+                                    <ColumnListItem>
+                                        <cells>
+                                            <Text text="{create>sequenceNo}"/>
+                                            <Text text="{create>fieldName}"/>
+                                            <ObjectStatus
+                                                text="{path:'create>dataType', formatter:'.formatTypeText'}"
+                                                state="{path:'create>dataType', formatter:'.formatTypeState'}"/>
+                                            <Select
+                                                selectedKey="{create>sheet}"
+                                                change="onFieldSheetChange"
+                                                visible="{create>/isMultiSheetMode}"
+                                                width="100%">
+                                                <core:Item key="Summary" text="Summary"/>
+                                                <core:Item key="Detail" text="Detail"/>
+                                                <core:Item key="Adjustments" text="Adjustments"/>
+                                            </Select>
+                                            <HBox>
+                                                <Button icon="sap-icon://arrow-top" type="Transparent" press="onMoveFieldUp"/>
+                                                <Button icon="sap-icon://arrow-bottom" type="Transparent" press="onMoveFieldDown"/>
+                                                <Button icon="sap-icon://decline" type="Transparent" press="onRemoveSelectedField"/>
+                                            </HBox>
+                                        </cells>
+                                    </ColumnListItem>
+                                </items>
+                            </Table>
+                        </l:VerticalLayout>
+                    </IconTabFilter>
+
+                </items>
+            </IconTabBar>
+        </content>
+
+        <buttons>
+            <Button text="Cancel" press="onCloseDialog"/>
+            <Button
+                text="Create &amp; Download"
+                type="Emphasized"
+                press="onOpenSaveTemplateDialog"
+                enabled="{= ${create>/SelectedFields/length} > 0}"/>
+        </buttons>
+    </Dialog>
+
+</core:FragmentDefinition>

@@ -1,0 +1,293 @@
+_schema-version: 3.3.0
+ID: lockbox_templates_backend
+description: A simple CAP project.
+version: 1.0.0
+
+modules:
+
+  # ================================================================
+  # TEMPLATE BACKEND SERVICE
+  # ================================================================
+  - name: lockbox_templates_backend-srv
+    type: nodejs
+    path: gen/srv
+
+    properties:
+      CDS_CONFIG: |
+        {"requires":{"db":{"credentials":{"schema":"Schema_ClearIQ_Template"}}}}
+      NODE_ENV: production
+
+    requires:
+      - name: lockbox_templates_backend-auth
+      - name: Postgresql
+      - name: lockbox_templates_backend-destination-service
+
+    provides:
+      - name: srv-api
+        properties:
+          srv-url: ${default-url}
+
+    parameters:
+      buildpack: nodejs_buildpack
+      instances: 1
+
+    build-parameters:
+      builder: npm-ci
+
+
+  # ================================================================
+  # POSTGRESQL DEPLOYER
+  # ================================================================
+  - name: lockbox_templates_backend-postgres-deployer
+    type: nodejs
+    path: gen/pg
+
+    properties:
+      CDS_CONFIG: |
+        {"requires":{"db":{"credentials":{"schema":"Schema_ClearIQ_Template"}}}}
+
+    requires:
+      - name: Postgresql
+
+    parameters:
+      buildpack: nodejs_buildpack
+      disk-quota: 1G
+      memory: 256M
+      no-route: true
+      no-start: true
+
+      tasks:
+        - command: npm start
+          disk-quota: 1G
+          memory: 256M
+          name: deploy-to-postgresql
+
+    build-parameters:
+      ignore:
+        - node_modules/
+
+
+  # ================================================================
+  # DESTINATION CONTENT
+  # ================================================================
+  - name: lockbox_templates_backend-destination-content
+    type: com.sap.application.content
+
+    requires:
+      - name: lockbox_templates_backend-destination-service
+        parameters:
+          content-target: true
+
+      - name: lockbox_templates_backend-repo-host
+        parameters:
+          service-key:
+            name: lockbox_templates_backend-repo-host-key
+
+      - name: lockbox_templates_backend-auth
+        parameters:
+          service-key:
+            name: lockbox_templates_backend-auth-key
+
+    parameters:
+      content:
+        instance:
+          destinations:
+
+            # --------------------------------------------------------
+            # HTML5 Repository
+            # --------------------------------------------------------
+            - Name: lockbox_templates_backend_html_repo_host
+              ServiceInstanceName: lockbox_templates_backend-html5-service
+              ServiceKeyName: lockbox_templates_backend-repo-host-key
+              sap.cloud.service: lockboxtemplates
+
+            # --------------------------------------------------------
+            # XSUAA Authentication
+            # --------------------------------------------------------
+            - Authentication: OAuth2UserTokenExchange
+              Name: lockbox_templates_backend_auth
+              ServiceInstanceName: lockbox_templates_backend-auth
+              ServiceKeyName: lockbox_templates_backend-auth-key
+              sap.cloud.service: lockboxtemplates
+
+          existing_destinations_policy: update
+
+    build-parameters:
+      no-source: true
+
+
+  # ================================================================
+  # HTML5 APP CONTENT
+  # ================================================================
+  - name: lockbox_templates_backend-app-content
+    type: com.sap.application.content
+    path: .
+
+    requires:
+      - name: lockbox_templates_backend-repo-host
+        parameters:
+          content-target: true
+
+    build-parameters:
+      build-result: resources
+
+      requires:
+        - artifacts:
+            - filetemplockboxtemppattern.zip
+          name: filetemplockboxtemppattern
+          target-path: resources/
+
+
+  # ================================================================
+  # HTML5 APPLICATION
+  # ================================================================
+  - name: filetemplockboxtemppattern
+    type: html5
+    path: app/lockbox_temp_pattern
+
+    build-parameters:
+      build-result: dist
+      builder: custom
+
+      commands:
+        - npm install
+        - npm run build:cf
+
+      supported-platforms: []
+
+
+# ==================================================================
+# RESOURCES
+# ==================================================================
+
+resources:
+
+  # ================================================================
+  # POSTGRESQL
+  # ================================================================
+  - name: Postgresql
+    type: org.cloudfoundry.existing-service
+
+    parameters:
+      service-name: Postgresql
+
+
+  # ================================================================
+  # HTML5 APPLICATION REPOSITORY
+  # ================================================================
+  - name: lockbox_templates_backend-repo-host
+    type: org.cloudfoundry.managed-service
+
+    parameters:
+      service: html5-apps-repo
+      service-name: lockbox_templates_backend-html5-service
+      service-plan: app-host
+
+
+  # ================================================================
+  # DESTINATION SERVICE
+  # ================================================================
+  - name: lockbox_templates_backend-destination-service
+    type: org.cloudfoundry.managed-service
+
+    parameters:
+
+      config:
+
+        HTML5Runtime_enabled: true
+
+        init_data:
+          instance:
+
+            destinations:
+
+              # ------------------------------------------------------
+              # UI5 DESTINATION
+              # ------------------------------------------------------
+              - Authentication: NoAuthentication
+                Name: ui5
+                ProxyType: Internet
+                Type: HTTP
+                URL: https://ui5.sap.com
+
+
+              # ------------------------------------------------------
+              # MANAGED ROUTER
+              # ------------------------------------------------------
+              - Authentication: NoAuthentication
+                HTML5.DynamicDestinations: true
+                HTML5.ForwardAuthToken: true
+                Name: managedrouter
+                ProxyType: Internet
+                Type: HTTP
+                URL: ~{srv-api/srv-url}
+
+              - Authentication: OAuth2JWTBearer
+                Name: LockBoxRulesDestination
+                ProxyType: Internet
+                Type: HTTP
+                URL: https://praeemineo-llc-h40wwjzd772w1g15-dev-lockbox-rules-backend-srv.cfapps.ap10.hana.ondemand.com
+                tokenServiceURLType: Dedicated
+                clientId: sb-lockbox_rules_backend-Praeemineo_LLC_h40wwjzd772w1g15-dev!t82649
+                clientSecret: b121fd1c-1560-4775-b27d-7ab0f36ae6a0$f4fDLUEmlM90RaksVzkwkYbTXhFyoWDfNfkZlUmTMh0=
+                tokenServiceURL: https://h40wwjzd772w1g15.authentication.ap10.hana.ondemand.com/oauth/token
+            existing_destinations_policy: update
+
+        version: 1.0.0
+
+      service: destination
+      service-name: lockbox_templates_backend-destination-service
+      service-plan: lite
+
+    requires:
+      - name: srv-api
+
+
+  # ================================================================
+  # XSUAA
+  # ================================================================
+  - name: lockbox_templates_backend-auth
+    type: org.cloudfoundry.managed-service
+
+    parameters:
+
+      config:
+        oauth2-configuration:
+          credential-types:
+            - binding-secret
+            - x509
+
+        tenant-mode: dedicated
+
+        xsappname: lockbox_templates_backend-${org}-${space}
+
+      path: ./xs-security.json
+
+      service: xsuaa
+      service-plan: application
+
+
+# ==================================================================
+# GLOBAL PARAMETERS
+# ==================================================================
+
+parameters:
+  deploy_mode: html5-repo
+  enable-parallel-deployments: true
+
+
+# ==================================================================
+# BUILD PARAMETERS
+# ==================================================================
+
+build-parameters:
+
+  before-all:
+
+    - builder: custom
+
+      commands:
+        - npm ci
+        - npx cds build --production
+        - cp pg-package.json gen/pg/package.json
+

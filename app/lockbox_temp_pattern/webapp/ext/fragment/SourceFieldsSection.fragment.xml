@@ -1,0 +1,99 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    core:require="{Formatter: 'file/temp/lockboxtemppattern/ext/util/Formatter', ObjectPageExt: 'file/temp/lockboxtemppattern/ext/controller/ObjectPageExt'}">
+
+    <VBox width="100%" class="sapUiSmallMargin">
+
+        <Toolbar>
+            <Title text="Source Fields" level="H4"/>
+            <ToolbarSpacer/>
+            <ToggleButton
+                text="Show Unmapped Only"
+                icon="sap-icon://filter"
+                press="ObjectPageExt.onToggleUnmappedFilter"/>
+            <Button
+                text="Delete Selected"
+                icon="sap-icon://delete"
+                type="Transparent"
+                press="ObjectPageExt.onDeleteSelectedFields"/>
+        </Toolbar>
+
+        <Table
+            id="sourceFieldsTable"
+            mode="MultiSelect"
+            items="{path: 'mappings'}"
+            growing="true"
+            growingThreshold="50"
+            noDataText="No fields added yet. Use 'Add Field' to get started.">
+
+            <columns>
+                <Column><Text text="Source Field"/></Column>
+                <Column><Text text="Sheet"/></Column>
+                <Column><Text text="Data Type"/></Column>
+                <Column><Text text="Transformation"/></Column>
+                <Column><Text text="Target API Field"/></Column>
+                <Column><Text text="Semantic Role"/></Column>
+                <Column><Text text="Status"/></Column>
+                <Column><Text text="Status Detail"/></Column>
+                <Column hAlign="Center" width="4em"><Text text=""/></Column>
+            </columns>
+
+            <items>
+                <ColumnListItem>
+                    <cells>
+
+                        <Text text="{fieldName}"/>
+
+                        <Select selectedKey="{sheet}" width="100%">
+                            <core:Item key="Summary" text="Summary"/>
+                            <core:Item key="Detail" text="Detail"/>
+                            <core:Item key="Adjustments" text="Adjustments"/>
+                        </Select>
+
+                        <ObjectStatus
+                            text="{path:'fieldDataType', formatter:'Formatter.formatDataTypeText'}"
+                            state="{path:'fieldDataType', formatter:'Formatter.formatDataTypeState'}"/>
+
+                        <Select
+                            selectedKey="{transformation_ID}"
+                            items="{path: '/Transformation', templateShareable: true}"
+                            forceSelection="false"
+                            width="100%">
+                            <core:Item key="{ID}" text="{name}"/>
+                        </Select>
+
+                        <Select
+                            selectedKey="{targetApiField_ID}"
+                            items="{path: '/TargetApiField', templateShareable: true}"
+                            forceSelection="false"
+                            width="100%">
+                            <core:Item key="{ID}" text="{apiFieldName}"/>
+                        </Select>
+
+                        <Select selectedKey="{semanticRole}" width="100%">
+                            <core:Item key="AMOUNT" text="Amount"/>
+                            <core:Item key="DATE" text="Date"/>
+                            <core:Item key="REFERENCE" text="Reference"/>
+                            <core:Item key="PARTY" text="Party"/>
+                            <core:Item key="CODE" text="Code"/>
+                            <core:Item key="TEXT" text="Text"/>
+                        </Select>
+
+                        <ObjectStatus
+                            text="{path:'status', formatter:'Formatter.formatStatusText'}"
+                            state="{path:'status', formatter:'Formatter.formatStatusState'}"
+                            icon="{path:'status', formatter:'Formatter.formatStatusIcon'}"/>
+
+                        <Text text="{statusDetail}"/>
+
+                        <Button icon="sap-icon://delete" type="Transparent" press="ObjectPageExt.onDeleteMappingRow"/>
+
+                    </cells>
+                </ColumnListItem>
+            </items>
+        </Table>
+
+    </VBox>
+
+</core:FragmentDefinition>

@@ -1,0 +1,89 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:l="sap.ui.layout"
+    xmlns:form="sap.ui.layout.form"
+    core:require="{Formatter: 'file/temp/lockboxtemppattern/ext/util/Formatter'}">
+
+    <l:VerticalLayout width="100%" class="sapUiSmallMargin">
+
+        <form:SimpleForm
+            editable="false"
+            layout="ResponsiveGridLayout"
+            labelSpanL="3"
+            labelSpanM="3"
+            columnsL="2"
+            columnsM="2"
+            title="General Information"
+            class="tbFacetCard">
+
+            <form:content>
+
+                <Label text="Template ID"/>
+                <ObjectStatus
+                    text="{parts:['ID','templateType'], formatter:'Formatter.formatTemplateID'}"
+                    state="Information"/>
+
+                <Label text="Template Name"/>
+                <Text text="{templateName}"/>
+
+                <Label text="Template Type"/>
+                <Text text="{templateType}"/>
+
+                <Label text="Sheet Mode"/>
+                <ObjectStatus
+                    text="{path:'sheetMode', formatter:'Formatter.formatSheetModeText'}"
+                    state="{path:'sheetMode', formatter:'Formatter.formatSheetModeState'}"/>
+
+                <Label text="Status"/>
+                <ObjectStatus text="{status}" state="Success"/>
+
+                <Label text="Template Kind"/>
+                <ObjectStatus
+                    text="{= ${isStandard} ? 'Standard (Built-in)' : 'Custom' }"
+                    icon="{= ${isStandard} ? 'sap-icon://locked' : 'sap-icon://unlocked' }"
+                    state="{= ${isStandard} ? 'Warning' : 'Success' }"/>
+
+                <Label text="Total Fields"/>
+                <Text text="{mappingsCount}"/>
+
+            </form:content>
+        </form:SimpleForm>
+
+        <form:SimpleForm
+            editable="false"
+            layout="ResponsiveGridLayout"
+            labelSpanL="3"
+            labelSpanM="3"
+            columnsL="2"
+            columnsM="2"
+            title="Administrative Data"
+            class="tbFacetCard tbFacetCardMuted">
+
+            <form:content>
+
+                <Label text="Created By"/>
+                <Text text="{createdBy}"/>
+
+                <Label text="Created On"/>
+                <Text text="{parts:['createdAt','isStandard'], formatter:'Formatter.formatCreatedDate'}"/>
+
+                <Label text="Changed By"/>
+                <Text text="{modifiedBy}"/>
+
+                <Label text="Changed On"/>
+                <Text text="{modifiedAt}"/>
+
+            </form:content>
+        </form:SimpleForm>
+
+        <MessageStrip
+            text="This is the Standard Template. It cannot be edited or deleted, and serves as the baseline for Auto Map Standard on other templates."
+            type="Warning"
+            showIcon="true"
+            visible="{isStandard}"
+            class="tbStandardNotice"/>
+
+    </l:VerticalLayout>
+
+</core:FragmentDefinition>

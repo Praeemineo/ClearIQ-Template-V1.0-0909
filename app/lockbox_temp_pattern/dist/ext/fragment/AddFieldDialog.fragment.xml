@@ -1,0 +1,41 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:l="sap.ui.layout">
+
+    <Dialog
+        id="addFieldDialog"
+        title="Add Custom Field"
+        contentWidth="450px">
+
+        <content>
+            <l:VerticalLayout class="sapUiContentPadding" width="100%">
+
+                <Label text="Field Name" labelFor="newFieldNameInput" required="true"/>
+                <Input id="newFieldNameInput" width="100%" placeholder="e.g. Customer Reference"/>
+
+                <Label text="Data Type" labelFor="newTypeSelect" class="sapUiTinyMarginTop" required="true"/>
+                <Select id="newTypeSelect" width="100%" forceSelection="true" selectedKey="Text">
+                    <core:Item key="Text" text="Text"/>
+                    <core:Item key="Date" text="Date"/>
+                    <core:Item key="Number" text="Number"/>
+                    <core:Item key="Decimal" text="Decimal"/>
+                    <core:Item key="Boolean" text="Boolean"/>
+                </Select>
+
+                <Label text="Property" labelFor="newPropertySelect" class="sapUiTinyMarginTop"/>
+                <Select id="newPropertySelect" width="100%" forceSelection="true" selectedKey="OPTIONAL">
+                    <core:Item key="OPTIONAL" text="Optional"/>
+                    <core:Item key="REQUIRED" text="Required"/>
+                </Select>
+
+            </l:VerticalLayout>
+        </content>
+
+        <buttons>
+            <Button text="Cancel" press="onCloseAddFieldDialog"/>
+            <Button text="Save" type="Emphasized" press="onSaveNewField"/>
+        </buttons>
+    </Dialog>
+
+</core:FragmentDefinition>

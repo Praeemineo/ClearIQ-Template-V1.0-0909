@@ -1,0 +1,20 @@
+{
+  "xsappname": "lockbox_templates_backend-${org}-${space}",
+  "tenant-mode": "dedicated",
+  "scopes": [
+    {
+      "name": "$XSAPPNAME.ClearIQTemplateAdmin",
+      "description": "Full access to Lockbox Template Builder"
+    }
+  ],
+  "role-templates": [
+    {
+      "name": "ClearIQTemplateAdmin",
+      "description": "ClearIQ Template Admin",
+      "scope-references": [
+        "$XSAPPNAME.ClearIQTemplateAdmin"
+      ],
+      "attribute-references": []
+    }
+  ]
+}

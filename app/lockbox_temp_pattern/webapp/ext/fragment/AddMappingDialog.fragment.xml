@@ -1,0 +1,25 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+
+    <SelectDialog
+        id="addMappingDialog"
+        title="Select a Field to Add"
+        search="onSearchAddMappingField"
+        confirm="onConfirmAddMappingField"
+        cancel="onCloseAddMappingDialog"
+        items="{path: '/FieldMaster', sorter: {path: 'fieldName'}}"
+        noDataText="No fields found.">
+
+        <items>
+            <StandardListItem
+                title="{fieldName}"
+                description="{dataType}"
+                icon="{= ${isCustom} ? 'sap-icon://user-edit' : 'sap-icon://source-code' }"
+                iconInset="false"
+                type="Active"/>
+        </items>
+
+    </SelectDialog>
+
+</core:FragmentDefinition>

@@ -1,0 +1,10 @@
+{
+  "engines": { "node": ">=20" },
+  "dependencies": {
+    "@sap/cds": "^9",
+    "@cap-js/postgres": "^2.3.0"
+  },
+  "scripts": {
+    "start": "cds-deploy --schema Schema_ClearIQ_Template"
+  }
+}

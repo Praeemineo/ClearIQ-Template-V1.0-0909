@@ -1,0 +1,73 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    core:require="{
+        ObjectPageExt: 'file/temp/lockboxtemppattern/ext/controller/ObjectPageExt'
+    }">
+
+    <VBox width="100%" class="sapUiSmallMargin">
+
+        <Table
+            id="mappingRulesTable"
+            items="{path: 'rules', sorter: {path: 'sequenceNo'}}"
+            growing="true"
+            growingThreshold="50"
+            noDataText="No rules added yet. Use 'Add Rule' to get started.">
+
+            <columns>
+                <Column width="4em">
+                    <Text text="Seq"/>
+                </Column>
+
+                <Column>
+                    <Text text="Rule ID"/>
+                </Column>
+
+                <Column>
+                    <Text text="Rule Name"/>
+                </Column>
+
+                <Column hAlign="Center" width="10em">
+                    <Text text="Actions"/>
+                </Column>
+            </columns>
+
+            <items>
+                <ColumnListItem>
+                    <cells>
+
+                        <Text text="{sequenceNo}"/>
+                        <Text text="{ruleId}"/>
+                        <Text text="{ruleName}"/>
+
+                        <HBox>
+
+                            <Button
+                                icon="sap-icon://arrow-top"
+                                type="Transparent"
+                                press="ObjectPageExt.onMoveRuleUpRow"
+                                tooltip="Move Up"/>
+
+                            <Button
+                                icon="sap-icon://arrow-bottom"
+                                type="Transparent"
+                                press="ObjectPageExt.onMoveRuleDownRow"
+                                tooltip="Move Down"/>
+
+                            <Button
+                                icon="sap-icon://delete"
+                                type="Transparent"
+                                press="ObjectPageExt.onDeleteRuleRow"
+                                tooltip="Delete"/>
+
+                        </HBox>
+
+                    </cells>
+                </ColumnListItem>
+            </items>
+
+        </Table>
+
+    </VBox>
+
+</core:FragmentDefinition>

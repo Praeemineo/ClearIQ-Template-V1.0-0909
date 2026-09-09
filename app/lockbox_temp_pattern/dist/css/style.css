@@ -1,0 +1,61 @@
+/* ================================================================
+   Template Details — facet-style cards
+   Makes the "General Information" / "Administrative Data" groups
+   render like standard SAPUI5 ObjectPage facets: separate white
+   cards with a subtle shadow, rounded corners, and a facet-style
+   title, instead of two forms sharing one flat container.
+
+   Uses Fiori Horizon theme CSS variables throughout, so it inherits
+   light/dark/HCB theme changes automatically instead of hardcoding
+   colors.
+   ================================================================ */
+
+.tbFacetCard {
+    background: var(--sapObjectHeader_Background, var(--sapBaseColor));
+    border-radius: 0.5rem;
+    box-shadow: var(--sapContent_Shadow0, 0 0 0.125rem 0 rgba(0,0,0,0.1), 0 0.125rem 0.25rem 0 rgba(0,0,0,0.1));
+    padding: 1rem 1.25rem 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.tbFacetCard:last-of-type {
+    margin-bottom: 0;
+}
+
+/* SimpleForm's own title rendering (h4-level, sapUiFormTitle) —
+   restyle to match sap.uxap facet header conventions: bold,
+   sap-standard title color, hairline rule beneath, breathing room
+   below the rule before the fields start. */
+.tbFacetCard .sapUiFormTitle {
+    font-family: var(--sapFontHeaderFamily);
+    font-size: var(--sapFontHeader5Size, 1rem);
+    font-weight: 700;
+    color: var(--sapGroup_TitleTextColor, var(--sapTextColor));
+    padding-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
+    border-bottom: 1px solid var(--sapGroup_ContentBorderColor, var(--sapList_BorderColor));
+}
+
+/* Tighten label/value row rhythm slightly so grouped facets read as
+   a coherent block rather than a loose form. */
+.tbFacetCard .sapUiFormResGridContainer > .sapUiFormElement {
+    margin-bottom: 0.375rem;
+}
+
+.tbFacetCard .sapMLabel {
+    color: var(--sapContent_LabelColor, var(--sapTextColor));
+}
+
+/* Administrative Data reads as secondary/reference info in every
+   standard Fiori app — slightly muted text, smaller than primary
+   General Information values. */
+.tbFacetCardMuted .sapMText {
+    color: var(--sapContent_LabelColor, var(--sapTextColor));
+    font-size: 0.875rem;
+}
+
+/* Keep the standard-template warning visually distinct from the
+   facet cards above it rather than looking like a third card. */
+.tbStandardNotice {
+    margin-top: 0.5rem;
+}

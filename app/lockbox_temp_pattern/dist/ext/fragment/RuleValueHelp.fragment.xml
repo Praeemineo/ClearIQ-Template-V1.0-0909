@@ -1,0 +1,32 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+
+    <TableSelectDialog
+    id="ruleValueHelpDialog"
+    title="Select a Rule"
+    search="onSearchRule"
+    confirm="onRuleSelected"
+    cancel="onRuleCancel"
+    items="{rules>/Rules}"
+    noDataText="No rules found. Check the Rules Engine connection.">
+
+        <columns>
+            <Column><Text text="Rule ID"/></Column>
+            <Column><Text text="Rule Name"/></Column>
+            <Column><Text text="Action Type"/></Column>
+        </columns>
+
+        <items>
+    <ColumnListItem type="Active" vAlign="Middle">
+        <cells>
+            <Text text="{rules>ruleId}"/>
+            <Text text="{rules>ruleName}"/>
+            <Text text="{rules>actionType}"/>
+        </cells>
+    </ColumnListItem>
+</items>
+
+    </TableSelectDialog>
+
+</core:FragmentDefinition>

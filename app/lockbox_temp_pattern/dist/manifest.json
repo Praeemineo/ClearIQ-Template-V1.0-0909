@@ -1,0 +1,367 @@
+{
+	"_version": "1.86.0",
+	"sap.app": {
+		"id": "file.temp.lockboxtemppattern",
+		"type": "application",
+		"i18n": {
+			"bundleUrl": "i18n/i18n.properties",
+			"supportedLocales": [
+				""
+			]
+		},
+		"applicationVersion": {
+			"version": "0.0.2"
+		},
+		"title": "{{appTitle}}",
+		"description": "{{appDescription}}",
+		"resources": "resources.json",
+		"sourceTemplate": {
+			"id": "@sap/generator-fiori:lrop",
+			"version": "1.31.1",
+			"toolsId": "280d864c-9f78-4675-afe0-daa9c6448607"
+		},
+		"dataSources": {
+			"mainService": {
+				"uri": "/odata/v4/template/",
+				"type": "OData",
+				"settings": {
+					"annotations": [],
+					"odataVersion": "4.0"
+				}
+			}
+		},
+		"crossNavigation": {
+			"inbounds": {
+				"lockbox_temp_pattern-manage": {
+					"semanticObject": "lockbox_temp_pattern",
+					"action": "manage",
+					"title": "{{lockbox_temp_pattern-manage.flpTitle}}",
+					"signature": {
+						"parameters": {},
+						"additionalParameters": "allowed"
+					}
+				}
+			}
+		}
+	},
+	"sap.cloud": {
+		"public": true,
+		"service": "lockboxtemplates"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "",
+			"favIcon": "",
+			"phone": "",
+			"phone@2": "",
+			"tablet": "",
+			"tablet@2": ""
+		},
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
+	"sap.ui5": {
+		"flexEnabled": true,
+		"dependencies": {
+			"minUI5Version": "1.151.0",
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.fe.templates": {}
+			}
+		},
+		"contentDensities": {
+			"compact": true,
+			"cozy": true
+		},
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "file.temp.lockboxtemppattern.i18n.i18n",
+					"supportedLocales": [
+						""
+					]
+				}
+			},
+			"": {
+				"dataSource": "mainService",
+				"preload": true,
+				"settings": {
+					"operationMode": "Server",
+					"autoExpandSelect": true,
+					"earlyRequests": true
+				}
+			},
+			"@i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"uri": "i18n/i18n.properties",
+				"settings": {
+					"supportedLocales": [
+						""
+					]
+				}
+			}
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "css/style.css"
+				}
+			]
+		},
+		"routing": {
+			"config": {},
+			"routes": [
+				{
+					"pattern": ":?query:",
+					"name": "TemplateMasterList",
+					"target": "TemplateMasterList"
+				},
+				{
+					"pattern": "TemplateMaster({key}):?query:",
+					"name": "TemplateMasterObjectPage",
+					"target": "TemplateMasterObjectPage"
+				},
+				{
+					"pattern": "Transformation:?query:",
+					"name": "TransformationList",
+					"target": "TransformationList"
+				},
+				{
+					"pattern": "Transformation({key}):?query:",
+					"name": "TransformationObjectPage",
+					"target": "TransformationObjectPage"
+				},
+				{
+					"pattern": "FileContract:?query:",
+					"name": "FileContractList",
+					"target": "FileContractList"
+				},
+				{
+					"pattern": "FileContract({key}):?query:",
+					"name": "FileContractObjectPage",
+					"target": "FileContractObjectPage"
+				},
+				{
+					"pattern": "FileContract({key})/sheetRoles({key2}):?query:",
+					"name": "FileContractSheetRoleObjectPage",
+					"target": "FileContractSheetRoleObjectPage"
+				}
+			],
+			"targets": {
+				"TemplateMasterList": {
+					"type": "Component",
+					"id": "TemplateMasterList",
+					"name": "sap.fe.templates.ListReport",
+					"options": {
+						"settings": {
+							"contextPath": "/TemplateMaster",
+							"variantManagement": "Page",
+							"navigation": {
+								"TemplateMaster": {
+									"detail": {
+										"route": "TemplateMasterObjectPage"
+									}
+								}
+							},
+							"controlConfiguration": {
+								"@com.sap.vocabularies.UI.v1.LineItem": {
+									"tableSettings": {
+										"type": "ResponsiveTable"
+									},
+									"actions": {
+										"CreateTemplate": {
+											"press": "file.temp.lockboxtemppattern.ext.controller.ListReportExt.onCreateTemplate",
+											"text": "{i18n>createTemplateBtn}",
+											"requiresSelection": false
+										},
+										"DownloadTemplate": {
+											"press": "file.temp.lockboxtemppattern.ext.controller.ListReportExt.onDownloadExcel",
+											"text": "{i18n>downloadTemplateBtn}",
+											"requiresSelection": true,
+											"enabled": "{= ${isStandard} !== true}"
+										},
+										"ManageTransformations": {
+											"press": "file.temp.lockboxtemppattern.ext.controller.ListReportExt.onManageTransformations",
+											"text": "Manage Transformations",
+											"requiresSelection": false
+										},
+										"ManageFileContracts": {
+											"press": "file.temp.lockboxtemppattern.ext.controller.ListReportExt.onManageFileContracts",
+											"text": "Manage File Contracts",
+											"requiresSelection": false
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"TemplateMasterObjectPage": {
+					"type": "Component",
+					"id": "TemplateMasterObjectPage",
+					"name": "sap.fe.templates.ObjectPage",
+					"options": {
+						"settings": {
+							"editableHeaderContent": false,
+							"contextPath": "/TemplateMaster",
+							"content": {
+								"body": {
+									"sections": {
+										"HeaderMetadataSection": {
+											"template": "file.temp.lockboxtemppattern.ext.fragment.HeaderMetadataSection",
+											"title": "{i18n>templateDetailsTitle}",
+											"position": {
+												"placement": "Before"
+											}
+										},
+										"SourceFieldsSection": {
+											"template": "file.temp.lockboxtemppattern.ext.fragment.SourceFieldsSection",
+											"title": "{i18n>sourceFieldsTitle}",
+											"actions": {
+												"AutoMapStandard": {
+													"press": "file.temp.lockboxtemppattern.ext.controller.ObjectPageExt.onAutoMapStandard",
+													"text": "{i18n>autoMapStandardBtn}"
+												},
+												"AutoMapAI": {
+													"press": "file.temp.lockboxtemppattern.ext.controller.ObjectPageExt.onAutoMapAI",
+													"text": "{i18n>autoMapAIBtn}"
+												},
+												"AddField": {
+													"press": "file.temp.lockboxtemppattern.ext.controller.ObjectPageExt.onAddMapping",
+													"text": "{i18n>addFieldBtn}"
+												}
+											},
+											"position": {
+												"placement": "After",
+												"anchor": "HeaderMetadataSection"
+											}
+										},
+										"MappingRulesSection": {
+											"template": "file.temp.lockboxtemppattern.ext.fragment.MappingRulesSection",
+											"title": "{i18n>mappingRulesTitle}",
+											"actions": {
+												"AddRule": {
+													"press": "file.temp.lockboxtemppattern.ext.controller.ObjectPageExt.onAddRule",
+													"text": "{i18n>addRuleBtn}"
+												}
+											},
+											"position": {
+												"placement": "After",
+												"anchor": "SourceFieldsSection"
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"TransformationList": {
+					"type": "Component",
+					"id": "TransformationList",
+					"name": "sap.fe.templates.ListReport",
+					"options": {
+						"settings": {
+							"contextPath": "/Transformation",
+							"variantManagement": "None",
+							"initialLoad": "Enabled",
+							"controllerExtensions": {
+								"sap.fe.templates.ListReport.ListReportController": {
+									"controllerName": "file.temp.lockboxtemppattern.ext.controller.TransformationListExt"
+								}
+							},
+							"navigation": {
+								"Transformation": {
+									"detail": {
+										"route": "TransformationObjectPage"
+									}
+								}
+							}
+						}
+					}
+				},
+				"TransformationObjectPage": {
+					"type": "Component",
+					"id": "TransformationObjectPage",
+					"name": "sap.fe.templates.ObjectPage",
+					"options": {
+						"settings": {
+							"editableHeaderContent": false,
+							"contextPath": "/Transformation"
+						}
+					}
+				},
+				"FileContractList": {
+					"type": "Component",
+					"id": "FileContractList",
+					"name": "sap.fe.templates.ListReport",
+					"options": {
+						"settings": {
+							"contextPath": "/FileContract",
+							"variantManagement": "Page",
+							"navigation": {
+								"FileContract": {
+									"detail": {
+										"route": "FileContractObjectPage"
+									}
+								}
+							},
+							"controlConfiguration": {
+								"@com.sap.vocabularies.UI.v1.LineItem": {
+									"tableSettings": {
+										"type": "ResponsiveTable"
+									}
+								}
+							}
+						}
+					}
+				},
+				"FileContractObjectPage": {
+					"type": "Component",
+					"id": "FileContractObjectPage",
+					"name": "sap.fe.templates.ObjectPage",
+					"options": {
+						"settings": {
+							"editableHeaderContent": false,
+							"contextPath": "/FileContract",
+							"navigation": {
+								"sheetRoles": {
+									"detail": {
+										"route": "FileContractSheetRoleObjectPage"
+									}
+								}
+							}
+						}
+					}
+				},
+				"FileContractSheetRoleObjectPage": {
+					"type": "Component",
+					"id": "FileContractSheetRoleObjectPage",
+					"name": "sap.fe.templates.ObjectPage",
+					"options": {
+						"settings": {
+							"editableHeaderContent": false,
+							"contextPath": "/FileContract/sheetRoles"
+						}
+					}
+				}
+			}
+		},
+		"flexBundle": false
+	},
+	"sap.fiori": {
+		"registrationIds": [],
+		"archeType": "transactional"
+	},
+	"sap.fe": {
+		"app": {
+			"enableLazyLoading": true
+		}
+	}
+}

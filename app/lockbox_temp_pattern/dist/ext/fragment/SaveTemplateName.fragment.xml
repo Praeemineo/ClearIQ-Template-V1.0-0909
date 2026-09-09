@@ -1,0 +1,36 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:l="sap.ui.layout">
+
+    <Dialog
+        id="saveTemplateNameDialog"
+        title="Name Your Template"
+        contentWidth="420px">
+
+        <content>
+            <l:VerticalLayout class="sapUiContentPadding" width="100%">
+
+                <Label text="Template Name" labelFor="templateNameInput" required="true"/>
+                <Input
+                    id="templateNameInput"
+                    width="100%"
+                    placeholder="e.g. Nordstrom_Lockbox"
+                    liveChange="onTemplateNameLiveChange"
+                    valueState="{create>/templateNameValueState}"
+                    valueStateText="Please enter a template name."/>
+
+                <Text
+                    text="Note: '_Temp' will be appended automatically to the saved name."
+                    class="sapUiTinyMarginTop"/>
+
+            </l:VerticalLayout>
+        </content>
+
+        <buttons>
+            <Button text="Cancel" press="onCancelSaveTemplateDialog"/>
+            <Button text="Create &amp; Download" type="Emphasized" press="onConfirmSaveTemplate"/>
+        </buttons>
+    </Dialog>
+
+</core:FragmentDefinition>
